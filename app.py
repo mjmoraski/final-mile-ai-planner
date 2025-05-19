@@ -36,7 +36,7 @@ Delivery Data:
         st.write(response.choices[0].message.content)
 
         st.subheader("🧠 AI-Suggested Route Plan")
-        st.write(response['choices'][0]['message']['content'])
+        st.write(response.choices[0].message.content)
 
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 import numpy as np
