@@ -27,13 +27,13 @@ Delivery Data:
 
         client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-response = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[{"role": "user", "content": prompt}],
-    temperature=0.4
-)
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.4
+        )
 
-st.write(response.choices[0].message.content)
+        st.write(response.choices[0].message.content)
 
         st.subheader("🧠 AI-Suggested Route Plan")
         st.write(response['choices'][0]['message']['content'])
