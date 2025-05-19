@@ -25,11 +25,15 @@ Delivery Data:
 
         openai.api_key = st.secrets["OPENAI_API_KEY"]  # Add your API key in .streamlit/secrets.toml
 
-        response = openai.ChatCompletion.create(
-            model="gpt-4o",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.4
-        )
+        client = openai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": prompt}],
+    temperature=0.4
+)
+
+st.write(response.choices[0].message.content)
 
         st.subheader("🧠 AI-Suggested Route Plan")
         st.write(response['choices'][0]['message']['content'])
