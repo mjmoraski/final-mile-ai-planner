@@ -33,3 +33,40 @@ Delivery Data:
 
         st.subheader("🧠 AI-Suggested Route Plan")
         st.write(response['choices'][0]['message']['content'])
+
+from ortools.constraint_solver import pywrapcp, routing_enums_pb2
+import numpy as np
+
+# Distance matrix mockup (10x10, symmetric) for demonstration
+def create_distance_matrix(num_deliveries):
+    np.random.seed(1)
+    matrix = np.random.randint(5, 50, size=(num_deliveries, num_deliveries))
+    np.fill_diagonal(matrix, 0)
+    return matrix.tolist()
+
+def optimize_route(distance_matrix):
+    manager = pywrapcp.RoutingIndexManager(len(distance_matrix), 1, 0)
+    routing = pywrapcp.RoutingModel(manager)
+
+    def distance_callback(from_index, to_index):
+        return distance_matrix[manager.IndexToNode(from_index)][manager.IndexToNode(to_index)]
+
+    transit_callback_index = routing.RegisterTransitCallback(distance_callback)
+    routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
+
+    search_parameters = pywrapcp.DefaultRoutingSearchParameters()
+    search_parameters.first_solution_strategy = (
+        routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
+
+    solution = routing.SolveWithParameters(search_parameters)
+
+    if solution:
+        index = routing.Start(0)
+        route = []
+        while not routing.IsEnd(index):
+            route.append(manager.IndexToNode(index))
+            index = solution.Value(routing.NextVar(index))
+        route.append(manager.IndexToNode(index))
+        return route
+    return None
+
